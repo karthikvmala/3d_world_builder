@@ -5,8 +5,7 @@ An interactive 3D nature scene with dynamic lighting, animated animals, and soun
 ## Features
 
 - Dynamic day/night cycle with realistic lighting
-- Interactive animals that respond to clicks with animations and sounds
-- Ambient nature sounds (birds, frogs, wind, water)
+- Relaxing music and rain sounds effects
 - Beautiful terrain with trees and water
 - Post-processing effects (bloom, vignette, depth of field)
 - Camera controls for exploring the scene
