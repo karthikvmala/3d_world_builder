@@ -159,7 +159,7 @@ class LightingVisualizer {
         const starsGeometry = new THREE.BufferGeometry();
         const starsMaterial = new THREE.PointsMaterial({
             color: 0xffffff,
-            size: 0.3,
+            size: 0.6,
             transparent: true,
             opacity: 1.0,
             sizeAttenuation: true,
@@ -435,7 +435,7 @@ class LightingVisualizer {
 
         // Ambient light controls
         const ambientFolder = this.gui.addFolder('Ambient Light');
-        this.ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
         this.scene.add(this.ambientLight);
         ambientFolder.addColor(this.ambientLight, 'color').name('Ambient Light Color');
 
@@ -453,26 +453,6 @@ class LightingVisualizer {
         bloomFolder.add(this.effects.bloom, 'strength', 0, 5).name('Bloom Strength');
         bloomFolder.add(this.effects.bloom, 'radius', 0, 2).name('Bloom Radius');
         bloomFolder.add(this.effects.bloom, 'threshold', 0, 1).name('Bloom Threshold');
-        
-        // Color correction controls
-        const colorFolder = postFolder.addFolder('Color Correction');
-        colorFolder.add(this.effects, 'exposure', 0, 5).name('Exposure').onChange((value) => {
-            this.effects.colorCorrection.uniforms.exposure.value = value;
-        });
-        colorFolder.add(this.effects, 'contrast', 0, 5).name('Contrast').onChange((value) => {
-            this.effects.colorCorrection.uniforms.contrast.value = value;
-        });
-        
-        // Color temperature
-        colorFolder.add({ temperature: 0 }, 'temperature', -1, 1).name('Color Temperature').onChange((value) => {
-            const color = new THREE.Color();
-            if (value < 0) {
-                color.setHSL(0.6, 0.5, 0.5 + value * 0.5);
-            } else {
-                color.setHSL(0.1, 0.5, 0.5 + value * 0.5);
-            }
-            this.effects.colorCorrection.uniforms.temperature.value = color;
-        });
 
         // Object controls
         const objectFolder = this.gui.addFolder('Add Objects');
@@ -756,7 +736,7 @@ class LightingVisualizer {
         this.sunLight.intensity = intensity;
         
         // Update ambient light
-        this.ambientLight.intensity = this.isDay ? 5 : 1;
+        this.ambientLight.intensity = this.isDay ? 0.3 : 0.15;
         
         console.log(hour);
         // Update sky color with smooth transitions
