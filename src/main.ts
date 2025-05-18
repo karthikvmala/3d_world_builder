@@ -415,42 +415,6 @@ class LightingVisualizer {
         positionFolder.add(this.camera.position, 'z', -100, 100).name('Position Z').setValue(50).onChange(() => {
             this.camera.updateProjectionMatrix();
         });
-        
-        // Camera rotation controls
-        const rotationFolder = cameraFolder.addFolder('Rotation');
-        rotationFolder.add(this.camera.rotation, 'x', -Math.PI, Math.PI).name('Rotation X').onChange(() => {
-            this.camera.updateProjectionMatrix();
-        });
-        rotationFolder.add(this.camera.rotation, 'y', -Math.PI, Math.PI).name('Rotation Y').onChange(() => {
-            this.camera.updateProjectionMatrix();
-        });
-        rotationFolder.add(this.camera.rotation, 'z', -Math.PI, Math.PI).name('Rotation Z').onChange(() => {
-            this.camera.updateProjectionMatrix();
-        });
-        
-        // Camera settings
-        const settingsFolder = cameraFolder.addFolder('Settings');
-        settingsFolder.add(this.controls, 'enableDamping').name('Smooth Movement').setValue(true).onChange(() => {
-            this.controls.update();
-        });
-        settingsFolder.add(this.controls, 'dampingFactor', 0.01, 0.1).name('Damping Factor').setValue(0.05).onChange(() => {
-            this.controls.update();
-        });
-        settingsFolder.add(this.controls, 'rotateSpeed', 0.1, 2).name('Rotate Speed').setValue(0.8).onChange(() => {
-            this.controls.update();
-        });
-        settingsFolder.add(this.controls, 'zoomSpeed', 0.1, 2).name('Zoom Speed').setValue(1.2).onChange(() => {
-            this.controls.update();
-        });
-        settingsFolder.add(this.controls, 'panSpeed', 0.1, 2).name('Pan Speed').setValue(1.0).onChange(() => {
-            this.controls.update();
-        });
-        settingsFolder.add(this.controls, 'minDistance', 1, 50).name('Min Distance').setValue(5).onChange(() => {
-            this.controls.update();
-        });
-        settingsFolder.add(this.controls, 'maxDistance', 50, 500).name('Max Distance').setValue(200).onChange(() => {
-            this.controls.update();
-        });
 
         // Time controls as a top-level folder
         const timeFolder = this.gui.addFolder('Time Controls');
@@ -541,7 +505,7 @@ class LightingVisualizer {
         let light: THREE.SpotLight | THREE.PointLight | THREE.DirectionalLight;
         const color = new THREE.Color(0xffffff);
         const intensity = 5;
-        const name = `${type} Light ${this.lightSources.length + 1}`;
+        const name = `${type} Light ${this.lightSources.length + 1} (edit or remove)`;
 
         switch (type) {
             case 'Directional':
@@ -681,7 +645,7 @@ class LightingVisualizer {
         this.objects.push(mesh);
 
         // Add material controls to GUI
-        const objectFolder = this.gui.addFolder(`${type} ${this.objects.length}`);
+        const objectFolder = this.gui.addFolder(`${type} ${this.objects.length} (edit or remove)`);
         
         // Add delete button at the top
         objectFolder.add({ delete: () => this.deleteObject(mesh, objectFolder) }, 'delete').name('Delete Object');
