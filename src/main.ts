@@ -132,6 +132,7 @@ class LightingVisualizer {
     private sun: THREE.Mesh;
     private moon: THREE.Mesh;
     private timeSpeed: number = 1;
+    private isPlaying: boolean = true;
     private isDay: boolean = true;
     private stars: THREE.Points;
     private rain: THREE.Points | null = null;
@@ -429,8 +430,9 @@ class LightingVisualizer {
         timeFolder.add({ speed: 1 }, 'speed', 0, 10).name('Time Speed').onChange((value) => {
             this.timeSpeed = value;
         });
-        timeFolder.add({ play: true }, 'play').name('Play/Pause').onChange((value) => {
-            this.timeSpeed = value ? this.timeSpeed : 0;
+        timeFolder.add({ play: this.isPlaying }, 'play').name('Play/Pause').onChange((value) => {
+            this.isPlaying = value;
+            this.timeSpeed = value ? 1 : 0;
         });
 
         // Ambient light controls
