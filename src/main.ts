@@ -429,11 +429,8 @@ class LightingVisualizer {
         timeFolder.add({ speed: 1 }, 'speed', 0, 10).name('Time Speed').onChange((value) => {
             this.timeSpeed = value;
         });
-        
-        // Create a play state object to track the state
-        const playState = { isPlaying: true };
-        timeFolder.add(playState, 'isPlaying').name('Play/Pause').onChange((value) => {
-            this.timeSpeed = value ? 1 : 0;
+        timeFolder.add({ play: true }, 'play').name('Play/Pause').onChange((value) => {
+            this.timeSpeed = value ? this.timeSpeed : 0;
         });
 
         // Ambient light controls
@@ -441,7 +438,6 @@ class LightingVisualizer {
         this.ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
         this.scene.add(this.ambientLight);
         ambientFolder.addColor(this.ambientLight, 'color').name('Ambient Light Color');
-        ambientFolder.add(this.ambientLight, 'intensity', 0, 10).setValue(1.6).name('Ambient Light Intensity');
 
         // Lighting controls
         const lightingFolder = this.gui.addFolder('Add Lighting');
