@@ -332,6 +332,15 @@
         </div>
     </div>
 
+    <script>
+        function toggleStory() {
+            const content = document.querySelector('.story-content');
+            const icon = document.querySelector('.toggle-icon');
+            content.classList.toggle('active');
+            icon.classList.toggle('active');
+        }
+    </script>
+
     <script type="module">
         // Handle video loading
         const video = document.getElementById('video-background');
@@ -365,13 +374,6 @@
                 progressBar.style.width = progress + '%';
             }, 200);
         });
-
-        function toggleStory() {
-            const content = document.querySelector('.story-content');
-            const icon = document.querySelector('.toggle-icon');
-            content.classList.toggle('active');
-            icon.classList.toggle('active');
-        }
 
         // Smooth scroll to features when clicking the catch phrase
         document.querySelector('.catch-phrase').addEventListener('click', () => {
