@@ -3,16 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nature Scene Visualizer</title>
+    <title>Lighting Visualizer - Interactive 3D Lighting Experience</title>
     <style>
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        #video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(44, 62, 80, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            margin: 20px 0;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #bdc3c7;
+            margin-bottom: 40px;
+        }
+
+        .catch-phrase {
+            font-size: 1.2rem;
+            color: #3498db;
+            font-style: italic;
+            margin: -20px 0 40px 0;
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+            animation: floatText 3s ease-in-out infinite;
+        }
+
+        .story-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            margin: 40px 0;
+            backdrop-filter: blur(5px);
             overflow: hidden;
-            font-family: Arial, sans-serif;
+            transition: max-height 0.5s ease-in-out;
         }
-        canvas {
-            display: block;
+
+        .story-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
         }
+
+        .story-header h2 {
+            margin: 0;
+            color: #3498db;
+            font-size: 1.5rem;
+        }
+
+        .story-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+            padding: 0 30px;
+        }
+
+        .story-content.active {
+            max-height: 1000px;
+            padding: 30px;
+        }
+
+        .story-text {
+            color: #ecf0f1;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .story-text:last-child {
+            margin-bottom: 0;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.active {
+            transform: rotate(180deg);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-card h3 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #ecf0f1;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
         .loading-screen {
             position: fixed;
             top: 0;
@@ -20,7 +197,7 @@
             width: 100%;
             height: 100%;
             background: #000;
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -29,11 +206,13 @@
             z-index: 1000;
             transition: opacity 0.5s ease-out;
         }
+
         .loading-screen.hidden {
             opacity: 0;
             pointer-events: none;
             visibility: hidden;
         }
+
         .progress-container {
             width: 300px;
             height: 20px;
@@ -42,24 +221,165 @@
             margin-top: 20px;
             overflow: hidden;
         }
+
         .progress-bar {
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, #4CAF50, #8BC34A);
             transition: width 0.3s ease-in-out;
         }
+
         .loading-text {
             margin-bottom: 10px;
+        }
+
+        @keyframes titleGlow {
+            from {
+                text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+            }
+        }
+
+        @keyframes floatText {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            .container {
+                padding: 20px;
+            }
+            #video-background {
+                display: none;
+            }
+            .overlay {
+                background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+            }
         }
     </style>
 </head>
 <body>
+    <video id="video-background" autoplay muted loop playsinline>
+        <source src="/assets/visualizer-preview.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
+    <div class="container">
+        <h1>Nature Lighting Theme Visualizer</h1>
+        <p class="subtitle">Experience the power of dynamic lighting in an interactive nature-inspired 3D environment</p>
+        <p class="catch-phrase">Hey Mom, we have nature on the computer now. No mosquitoes, no sunburn. 😂</p>
+        
+        <div class="story-section">
+            <div class="story-header" onclick="toggleStory()">
+                <h2>Discover the Story</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="story-content">
+                <p class="story-text">Step into a world where light tells its own story. As the sun rises, watch how shadows stretch and dance across your scene, creating a canvas of light and dark. When night falls, thousands of stars emerge, painting the sky with their gentle glow.</p>
+                
+                <p class="story-text">Add your own characters to this story - from simple shapes to complex structures, each one waiting to be brought to life by your creative lighting. Control the passage of time, pause to capture the perfect moment, or let the day flow naturally as you experiment with different lighting scenarios.</p>
+                
+                <p class="story-text">Enhance your scene with atmospheric effects - let rain fall, creating ripples of light, or watch as clouds drift across the sky, casting ever-changing shadows. Every element responds to your lighting choices, creating a dynamic, living environment that evolves with your vision.</p>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>Dynamic Day/Night Cycle</h3>
+                <p>Control time with play/pause functionality and watch as the sun and moon move across the sky, creating realistic lighting conditions throughout the day.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Add Your Own Lighting</h3>
+                <p>Add and customize different types of lights to create the perfect atmosphere for your scene, with real-time intensity and color adjustments.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Add Your Own Objects</h3>
+                <p>Add various 3D objects to test lighting effects - from simple shapes to complex geometries, all with customizable materials and properties.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Realistic Physics</h3>
+                <p>Experience high-quality shadows with soft edges and dynamic updates as lights move and objects interact, creating depth and realism.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Immersive Environment</h3>
+                <p>Enjoy ambient background music and dynamic sound effects. See how stars shine at night and how the clouds glow in the day.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Weather Effects</h3>
+                <p>Add rain and other atmospheric effects to enhance the mood of your scene with realistic particle systems and environmental interactions.</p>
+            </div>
+        </div>
+
+        <button class="cta-button">Enter Your World</button>
+    </div>
+
     <div id="loading" class="loading-screen">
-        <div class="loading-text">Loading Nature Scene...</div>
+        <div class="loading-text">Loading Lighting Visualizer...</div>
         <div class="progress-container">
             <div id="progress" class="progress-bar"></div>
         </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
+
+    <script type="module">
+        // Handle video loading
+        const video = document.getElementById('video-background');
+        video.addEventListener('loadeddata', () => {
+            video.play().catch(error => {
+                console.log('Video autoplay failed:', error);
+            });
+        });
+
+        // Handle CTA button click
+        document.querySelector('.cta-button').addEventListener('click', function(e) {
+            e.preventDefault();
+            const loadingScreen = document.getElementById('loading');
+            loadingScreen.style.display = 'flex';
+            
+            // Simulate loading progress
+            const progressBar = document.getElementById('progress');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    // Hide the landing page content
+                    document.querySelector('.container').style.display = 'none';
+                    // Load the main application
+                    import('./src/main').catch(error => {
+                        console.error('Failed to load main application:', error);
+                    });
+                }
+                progressBar.style.width = progress + '%';
+            }, 200);
+        });
+
+        function toggleStory() {
+            const content = document.querySelector('.story-content');
+            const icon = document.querySelector('.toggle-icon');
+            content.classList.toggle('active');
+            icon.classList.toggle('active');
+        }
+
+        // Smooth scroll to features when clicking the catch phrase
+        document.querySelector('.catch-phrase').addEventListener('click', () => {
+            document.querySelector('.features').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    </script>
 </body>
 </html> 
