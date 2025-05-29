@@ -35,7 +35,7 @@ class SoundManager {
         this.music = new Howl({
             src: ['/assets/ambient.mp3'],
             loop: true,
-            volume: 0.5
+            volume: 3
         });
 
         // Start playing music immediately
@@ -47,7 +47,7 @@ class SoundManager {
             rain: new Howl({
                 src: ['/assets/rain.mp3'],
                 loop: true,
-                volume: 0.3
+                volume: 1000
             }),
             addObject: new Howl({
                 src: ['/assets/pop.mp3'],
@@ -620,20 +620,7 @@ class LightingVisualizer {
         mesh.castShadow = true;
         mesh.receiveShadow = true;
 
-        // Add a ground plane under each object to receive shadows
-        const groundGeometry = new THREE.PlaneGeometry(10, 10);
-        const groundMaterial = new THREE.MeshStandardMaterial({
-            color: 0x808080,
-            roughness: 0.8,
-            metalness: 0.2
-        });
-        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = -Math.PI / 2;
-        ground.position.y = -0.5;
-        ground.receiveShadow = true;
-        mesh.add(ground);
-
-        // Position objects above ground
+        // Position objects
         const height = type === 'Cylinder' || type === 'Cone' ? 1 : 
                       type === 'Torus' ? 2 : 0.5;
         mesh.position.set(

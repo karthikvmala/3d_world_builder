@@ -1,6 +1,6 @@
-# Nature Scene Visualizer
+# 3D World Builder
 
-An interactive 3D nature scene with dynamic lighting, animated animals, and sound effects. It is also realistic and has shadows. Built with Three.js, GSAP, and Howler.js. 
+An interactive 3D scene with dynamic lighting, animated animals, and sound effects. It is also realistic and has shadows. Built with Three.js, GSAP, and Howler.js. You can add objects and lights to bring your world to life.
 
 ## Features
 
